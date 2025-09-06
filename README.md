@@ -20,31 +20,36 @@ A Next.js application demonstrating multi-wallet integration, order management, 
 ### Installation
 
 1. Clone the repository:
-\`\`\`bash
+
+```bash
 git clone https://github.com/eunit99/elementpay-app.git
-cd elementpay-frontend-assessment
-\`\`\`
+cd elementpay-app
+```
 
 2. Install dependencies:
-\`\`\`bash
+
+```bash
 npm install
-\`\`\`
+```
 
 3. Set up environment variables:
-\`\`\`bash
+
+```bash
 cp .env.example .env.local
-\`\`\`
+```
 
 Edit `.env.local` and add your WalletConnect Project ID:
-\`\`\`env
+
+```env
 WEBHOOK_SECRET=shh_super_secret
 NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID=your_project_id_here
-\`\`\`
+```
 
 4. Run the development server:
-\`\`\`bash
+
+```bash
 npm run dev
-\`\`\`
+```
 
 5. Open [http://localhost:3000](http://localhost:3000) in your browser.
 
@@ -81,7 +86,8 @@ npm run dev
 ### Order Management
 
 #### Create Order
-\`\`\`http
+
+```http
 POST /api/mock/orders/create
 Content-Type: application/json
 
@@ -91,17 +97,19 @@ Content-Type: application/json
   "token": "USDC",
   "note": "optional"
 }
-\`\`\`
+```
 
 #### Get Order Status
-\`\`\`http
+
+```http
 GET /api/mock/orders/{order_id}
-\`\`\`
+```
 
 ### Webhook Endpoint
 
 #### Process Webhook
-\`\`\`http
+
+```http
 POST /api/webhooks/elementpay
 Content-Type: application/json
 X-Webhook-Signature: t=<timestamp>,v1=<signature>
@@ -113,7 +121,7 @@ X-Webhook-Signature: t=<timestamp>,v1=<signature>
     "status": "settled"
   }
 }
-\`\`\`
+```
 
 ## Webhook Testing
 
@@ -122,27 +130,30 @@ X-Webhook-Signature: t=<timestamp>,v1=<signature>
 The webhook endpoint uses HMAC SHA-256 verification. Test with these examples:
 
 #### Valid Webhook (should return 200)
-\`\`\`bash
+
+```bash
 curl -X POST http://localhost:3000/api/webhooks/elementpay \
   -H 'Content-Type: application/json' \
   -H 'X-Webhook-Signature: t=1710000000,v1=3QXTcQv0m0h4QkQ0L0w9ZsH1YFhZgMGnF0d9Xz4P7nQ=' \
   -d '{"type":"order.settled","data":{"order_id":"ord_0xabc123","status":"settled"}}'
-\`\`\`
+```
 
 #### Invalid Signature (should return 403)
-\`\`\`bash
+
+```bash
 curl -X POST http://localhost:3000/api/webhooks/elementpay \
   -H 'Content-Type: application/json' \
   -H 'X-Webhook-Signature: t=1710000300,v1=AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=' \
   -d '{"type":"order.failed","data":{"order_id":"ord_0xabc123","status":"failed"}}'
-\`\`\`
+```
 
 #### Missing Signature (should return 401)
-\`\`\`bash
+
+```bash
 curl -X POST http://localhost:3000/api/webhooks/elementpay \
   -H 'Content-Type: application/json' \
   -d '{"type":"order.processing","data":{"order_id":"ord_0xabc123","status":"processing"}}'
-\`\`\`
+```
 
 ### Webhook Verification
 
@@ -157,7 +168,7 @@ The webhook signature verification follows this process:
 
 ### Frontend Architecture
 
-\`\`\`
+```txt
 ├── app/                    # Next.js App Router
 │   ├── api/               # API routes
 │   │   ├── mock/          # Mock order endpoints
@@ -180,7 +191,7 @@ The webhook signature verification follows this process:
     ├── wagmi.ts          # Wallet configuration
     ├── webhook-listener.ts # Webhook event handling
     └── webhook-verification.ts # HMAC verification
-\`\`\`
+```
 
 ### Key Design Decisions
 
